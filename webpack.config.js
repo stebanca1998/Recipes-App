@@ -48,7 +48,8 @@ module.exports = {
   },
   devServer: {
     historyApiFallback: true,
-    noInfo: true
+    noInfo: true,
+    proxy: 'http: //backend.test/'
   },
   performance: {
     hints: false

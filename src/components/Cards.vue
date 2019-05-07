@@ -28,7 +28,8 @@
         'deleteRecipe'
       ]),
       removeRecipe(){
-        this.deleteRecipe(this.ind)
+        this.$http.delete('http://localhost:3000/recipe/'+this.inid)
+        .then(res => this.deleteRecipe(this.ind) )
       }
     }
 

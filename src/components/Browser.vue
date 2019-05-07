@@ -2,13 +2,13 @@
   <div id="ma">
 
     <b-form>
-      <b-form-input size="sm" required placeholder="Search by recipe's id or recipe's name"></b-form-input>
-      <b-button id="b" type="submit" variant="primary">Search</b-button>
+      <b-form-input size="sm" v-model="criteria" placeholder="Search by recipe's id or recipe's name"></b-form-input>
+      <b-button id="b" type="submit" v-on:click="filter" variant="primary">Search</b-button>
     </b-form>
 
     <div id="results" >
       <div v-for="(recipe,index) in recipes" :key="index">
-        <Card :inid="recipe.Id" :name="recipe.name" :process="recipe.process" :ind="index" />
+        <Card :inid="recipe.idrecipe" :name="recipe.namerp" :process="recipe.process" :ind="index" />
       </div>
   
     </div>
@@ -21,9 +21,15 @@
 <script type="text/javascript">
 
   import Card from './Cards.vue';
-  import { mapState } from 'vuex';
+  import { mapState, mapMutations } from 'vuex';
 
   export default{
+    
+    data() {
+      return {
+        criteria: ''
+      }
+    },
     components: {
       Card
     },
@@ -31,8 +37,30 @@
       ...mapState([
       'recipes'
     ])
-    } 
-  };
+    },
+    created() {
+    this.$http.get('http://localhost:3000/recipes')
+    .then(res => this.setRecipes(res.data) )
+    },
+    methods:{
+     ...mapMutations([
+        'setRecipes',
+        'filtering'
+      ]),
+      filter(e){
+        e.preventDefault();
+
+        if(this.criteria == ''){
+          this.$http.get('http://localhost:3000/recipes')
+          .then(res => this.setRecipes(res.data) )
+        }else {
+          this.$http.get('http://localhost:3000/recipe/'+this.criteria)
+          .then(res => this.filtering(res.data))
+        }
+      }
+    }
+    
+  }
 
 </script>
 

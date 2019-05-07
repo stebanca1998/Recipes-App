@@ -4,11 +4,11 @@
     <b-form @submit.prevent="onSubmit" >
 
       <b-form-group id="input-group-1" label="Recipe's ID:" label-for="input-1">
-        <b-form-input id="input-1" type="number" v-model="recipe.Id" required placeholder="Enter recipe's ID"></b-form-input>
+        <b-form-input id="input-1" type="number" v-model="recipe.idrecipe" required placeholder="Enter recipe's ID"></b-form-input>
       </b-form-group>
 
       <b-form-group id="input-group-2" label="Recipe's name:" label-for="input-2">
-        <b-form-input id="input-2" v-model="recipe.name" placeholder="Enter recipe's name"></b-form-input>
+        <b-form-input id="input-2" v-model="recipe.namerp" placeholder="Enter recipe's name"></b-form-input>
       </b-form-group>
 
       <b-form-group id="input-group-3" label="Recipe's process:" label-for="input-3">
@@ -34,8 +34,8 @@
     data() {
       return {
         recipe:{
-          Id: '',
-          name: '',
+          idrecipe: '',
+          namerp: '',
           process: ''
         },
         mod: false
@@ -50,12 +50,13 @@
     methods: {
       ...mapMutations([
         'addRecipe',
-        'modifyRecipe'
+        'modifyRecipe',
+        'setRecipes'
       ]),
       onSubmit(evt){
 
         if(this.action=='Create'){
-          this.addRp()
+          this.addVerify()
         
         }else if(this.action=='Modify'){
           this.modVerify()
@@ -63,12 +64,38 @@
 
       },
       addRp(){
-        this.addRecipe(this.recipe);
+
+        this.$http.post('http://localhost:3000/recipe/'+this.recipe.idrecipe,this.recipe)
+        .then(res => this.addRecipe(res.data) )
+        
         alert("Receta creada");
         this.recipe = {}
       },
+      addVerify(){
+        var ind = 0;
+        
+        for(var i=0;i<this.recipes.length ; i++){
+          if(this.recipes[i].idrecipe == this.recipe.idrecipe){
+
+            alert("There is a recipe with identifier: " + this.recipe.idrecipe + ". Try with other indentifier")
+            this.recipe.idrecipe = ''
+
+            ind = ind + 1;
+
+            break
+          }
+        }
+
+        if(ind===0){
+          this.addRp();
+          
+          this.recipe = {}
+        }
+      },
       modRp(){
-        this.modifyRecipe(this.recipe);
+        this.$http.put('http://localhost:3000/recipe/'+this.recipe.idrecipe,this.recipe)
+        .then(res => this.modifyRecipe(res.data) )
+
         alert("Receta modificada");
         this.recipe = {}
         this.mod=false
@@ -78,12 +105,12 @@
         this.mod=false
         
         for(var i=0;i<this.recipes.length ; i++){
-          if(this.recipes[i].Id == this.recipe.Id){
+          if(this.recipes[i].idrecipe == this.recipe.idrecipe){
             ind = i;
             this.mod=true;
-            this.recipe.name = this.recipes[i].name
+            this.recipe.namerp = this.recipes[i].namerp
             this.recipe.process = this.recipes[i].process
-            breack
+            break
           }
         }
 

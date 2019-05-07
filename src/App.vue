@@ -26,7 +26,7 @@
 
 <script>
 
-  import { mapState } from 'vuex';
+  import { mapState, mapMutations } from 'vuex';
 
   import Form from './components/Form.vue';
   import Actions from './components/Actions.vue';
@@ -39,16 +39,12 @@
       Actions,
       Browser
     },
-    data () {
-      return {
-        state:true,//this state is true if the action is Search, otherwise is false
-      }
-    },
     computed:{
       ...mapState([
-      'action'
+      'action',
+      'recipes'
     ])
-    } 
+    }
 
 
   }
